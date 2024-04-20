@@ -16,6 +16,21 @@ setInterval(() => {
     numberOfRequestsForUser = {};
 }, 1000)
 
+app.use((req,res,next)=>{
+  const userId = req.headers['user-id'];
+  console.log( userId )
+  console.log( JSON.stringify( numberOfRequestsForUser ) )
+  if( numberOfRequestsForUser[userId] && numberOfRequestsForUser[userId] >= 5 ) {
+    res.status(404).send();
+    return;
+  } else if( numberOfRequestsForUser[userId] >= 0 ) {
+    numberOfRequestsForUser[userId] += 1;
+  } else {
+    numberOfRequestsForUser[userId] = 0;
+  }
+  next();
+})
+
 app.get('/user', function(req, res) {
   res.status(200).json({ name: 'john' });
 });
